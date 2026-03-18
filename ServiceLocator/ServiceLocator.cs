@@ -10,7 +10,7 @@ public class ServiceLocator
         if (!typeof(TImplementation).IsAssignableTo(typeof(TInterface)))
             throw new Exception($"{typeof(TImplementation).Name} does not implement {typeof(TInterface).Name}");
         if (_dict.ContainsKey(typeof(TInterface))) throw new Exception("Trying to register same service again!");
-        if(typeof(TImplementation).GetConstructors().Length > 1) throw new Exception("Multiple constructors!");
+        if(typeof(TImplementation).GetConstructors().Length != 1) throw new Exception("Multiple constructors!");
         
         ServiceDescriptor descriptor = new ServiceDescriptor(typeof(TImplementation), lifetime);
         _dict.Add(typeof(TInterface), descriptor);

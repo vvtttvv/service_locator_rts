@@ -61,4 +61,12 @@ public class Tests
             _slTest.Register<IMultipleConstructorHandler, MultipleConstructorHandler>(ServiceLifeTime.Transient)
         );
     }
+    
+    [Test]
+    public void TestGetNotRegistered()
+    {
+        Assert.Throws<Exception>(() => 
+            _slTest.Get<ICar>()
+        );
+    }
 }
