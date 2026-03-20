@@ -1,3 +1,5 @@
+using ServiceLocator.Exceptions;
+
 namespace ServiceLocator;
 
 public class ServiceLocator
@@ -8,9 +10,9 @@ public class ServiceLocator
     public bool Register<TInterface, TImplementation>(ServiceLifeTime lifetime)
     {
         if (!typeof(TImplementation).IsAssignableTo(typeof(TInterface)))
-            throw new Exception($"{typeof(TImplementation).Name} does not implement {typeof(TInterface).Name}");
-        if (_dict.ContainsKey(typeof(TInterface))) throw new Exception("Trying to register same service again!");
-        if(typeof(TImplementation).GetConstructors().Length != 1) throw new Exception("Multiple constructors!");
+            throw new DifferentOriginException();
+        if (_dict.ContainsKey(typeof(TInterface))) throw new TwoSameServicesException();
+        if(typeof(TImplementation).GetConstructors().Length != 1) throw new MultipleConstructorsException();
         
         ServiceDescriptor descriptor = new ServiceDescriptor(typeof(TImplementation), lifetime);
         _dict.Add(typeof(TInterface), descriptor);
@@ -34,7 +36,7 @@ public class ServiceLocator
 
     private object GetService(Type type)
     {
-        if (!_dict.ContainsKey(type)) throw new Exception($"Service {type.Name} is not registered.");
+        if (!_dict.ContainsKey(type)) throw new NotRegisteredServiceException();
         
         var descriptor = _dict[type];
         

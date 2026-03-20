@@ -1,4 +1,5 @@
-﻿using ServiceLocator.Mock;
+﻿using ServiceLocator.Exceptions;
+using ServiceLocator.Mock;
 namespace ServiceLocator.Tests;
 
 public class Tests
@@ -6,7 +7,7 @@ public class Tests
     private ServiceLocator _slTest;
 
     public interface IMultipleConstructorHandler { };
-    public class MultipleConstructorHandler
+    public class MultipleConstructorHandler : IMultipleConstructorHandler
     {
         public MultipleConstructorHandler() { }
         public MultipleConstructorHandler(ICar car, IPassenger pas) { }
@@ -19,7 +20,7 @@ public class Tests
     }
 
     [Test]
-    public void TestTransientInstances()
+    public void Register_DifferentRefInHeap_True()
     {
         _slTest.Register<IPassenger, Passenger>(ServiceLifeTime.Transient);
         IPassenger passenger = _slTest.Get<IPassenger>();
@@ -28,7 +29,7 @@ public class Tests
     }
     
     [Test]
-    public void TestSingletonInstances()
+    public void Register_SameRefInHeap_True()
     {
         _slTest.Register<IPassenger, Passenger>(ServiceLifeTime.Singleton);
         IPassenger passenger = _slTest.Get<IPassenger>();
@@ -37,7 +38,7 @@ public class Tests
     }
     
     [Test]
-    public void TestServiceInService()
+    public void Register_ServiceAInServiceBCreated_True()
     {
         _slTest.Register<ICar, Car>(ServiceLifeTime.Singleton);
         _slTest.Register<IPassenger, Passenger>(ServiceLifeTime.Singleton);
@@ -46,26 +47,26 @@ public class Tests
     }
     
     [Test]
-    public void TestRegisterTwoSameServices()
+    public void Register_TwoSameServices_TwoSameServicesException()
     {
         _slTest.Register<ICar, Car>(ServiceLifeTime.Singleton);
-        Assert.Throws<Exception>(() => 
+        Assert.Throws<TwoSameServicesException>(() => 
             _slTest.Register<ICar, Car>(ServiceLifeTime.Singleton)
         );
     }
     
     [Test]
-    public void TestMultipleConstructors()
+    public void Register_MultipleConstructors_MultipleConstructorsException()
     {
-        Assert.Throws<Exception>(() => 
+        Assert.Throws<MultipleConstructorsException>(() => 
             _slTest.Register<IMultipleConstructorHandler, MultipleConstructorHandler>(ServiceLifeTime.Transient)
         );
     }
     
     [Test]
-    public void TestGetNotRegistered()
+    public void Register_GetNotRegistered_NotRegisteredServiceException()
     {
-        Assert.Throws<Exception>(() => 
+        Assert.Throws<NotRegisteredServiceException>(() => 
             _slTest.Get<ICar>()
         );
     }
