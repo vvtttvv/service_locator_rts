@@ -27,6 +27,7 @@ public class AppointmentConfiguration : IEntityTypeConfiguration<Appointment>
 
         builder.HasIndex(x => x.Time);
 
+        //read more
         builder.HasIndex(x => new { x.DoctorId, x.Time })
             .IsUnique();
     }

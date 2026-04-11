@@ -10,10 +10,10 @@ public class Program
     {
         var context = new HospitalContext();
         
-        context.Clients
-            .ExecuteDelete();
-        context.Doctors
-            .ExecuteDelete();
+        // context.Clients
+        //     .ExecuteDelete();
+        // context.Doctors
+        //     .ExecuteDelete();
 
         
         // Add
@@ -44,10 +44,10 @@ public class Program
                 a.SetProperty(a => a.Time, new DateTime(2026, 4, 16,
                     9, 0, 0, DateTimeKind.Utc)));
         
-        // Delete
-        context.Appointments
-            .Where(a => a.DoctorId == doctor1.DoctorId)
-            .ExecuteDelete();
+        // // Delete
+        // context.Appointments
+        //     .Where(a => a.DoctorId == doctor1.DoctorId)
+        //     .ExecuteDelete();
         
 
         var appointments = context.Appointments.ToList();
