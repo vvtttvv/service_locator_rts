@@ -16,17 +16,64 @@ public class CategoryController(ICategoryService categoryService) : ControllerBa
 		return Ok(result.Select(x => x.ToResponse()));
 	}
 
+	[HttpGet("{id:int}")]
+	public async Task<ActionResult<CategoryResponseDto>> GetById(int id)
+	{
+		var result = await categoryService.GetByIdAsync(id);
+		return result is null ? NotFound() : Ok(result.ToResponse());
+	}
+
 	[HttpPost]
 	public async Task<ActionResult<CategoryResponseDto>> Create(CategoryRequestDto request)
 	{
 		try
 		{
 			var created = await categoryService.CreateAsync(request.ToEntity());
-			return Ok(created.ToResponse());
+			return CreatedAtAction(nameof(GetById), new { id = created.Id }, created.ToResponse());
 		}
 		catch (ArgumentException ex)
 		{
 			return BadRequest(ex.Message);
+		}
+		catch (InvalidOperationException ex)
+		{
+			return Conflict(ex.Message);
+		}
+	}
+
+	[HttpPut("{id:int}")]
+	public async Task<ActionResult<CategoryResponseDto>> Update(int id, CategoryRequestDto request)
+	{
+		try
+		{
+			var updated = await categoryService.UpdateAsync(id, request.ToEntity());
+			return Ok(updated.ToResponse());
+		}
+		catch (ArgumentException ex)
+		{
+			return BadRequest(ex.Message);
+		}
+		catch (KeyNotFoundException ex)
+		{
+			return NotFound(ex.Message);
+		}
+		catch (InvalidOperationException ex)
+		{
+			return Conflict(ex.Message);
+		}
+	}
+
+	[HttpDelete("{id:int}")]
+	public async Task<IActionResult> Delete(int id)
+	{
+		try
+		{
+			await categoryService.DeleteAsync(id);
+			return NoContent();
+		}
+		catch (KeyNotFoundException ex)
+		{
+			return NotFound(ex.Message);
 		}
 		catch (InvalidOperationException ex)
 		{

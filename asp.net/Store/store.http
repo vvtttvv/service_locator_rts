@@ -4,8 +4,16 @@
 GET {{Api_HostAddress}}/api/Product
 Accept: application/json
 
+### Products - Get by id
+GET {{Api_HostAddress}}/api/Product/1
+Accept: application/json
+
 ### Categories - Get all
 GET {{Api_HostAddress}}/api/Category
+Accept: application/json
+
+### Categories - Get by id
+GET {{Api_HostAddress}}/api/Category/1
 Accept: application/json
 
 ### Categories - Create valid
@@ -13,7 +21,7 @@ POST {{Api_HostAddress}}/api/Category
 Content-Type: application/json
 
 {
-	"name": "Electronics"
+	"name": "Deelectics"
 }
 
 ### Categories - Create duplicate (expects 409)
@@ -23,6 +31,17 @@ Content-Type: application/json
 {
 	"name": "electronics"
 }
+
+### Categories - Update valid
+PUT {{Api_HostAddress}}/api/Category/1
+Content-Type: application/json
+
+{
+	"name": "Electronics and Gadgets"
+}
+
+### Categories - Delete missing (expects 404)
+DELETE {{Api_HostAddress}}/api/Category/999
 
 ### Categories - Create invalid (expects 400)
 POST {{Api_HostAddress}}/api/Category
@@ -34,6 +53,10 @@ Content-Type: application/json
 
 ### Orders - Get all
 GET {{Api_HostAddress}}/api/Order
+Accept: application/json
+
+### Orders - Get by id
+GET {{Api_HostAddress}}/api/Order/1
 Accept: application/json
 
 ### Products - Create valid (requires existing category id)
@@ -55,6 +78,19 @@ Content-Type: application/json
 	"price": 500,
 	"categoryId": 999
 }
+
+### Products - Update valid
+PUT {{Api_HostAddress}}/api/Product/1
+Content-Type: application/json
+
+{
+	"name": "Laptop Pro",
+	"price": 1500,
+	"categoryId": 1
+}
+
+### Products - Delete missing (expects 404)
+DELETE {{Api_HostAddress}}/api/Product/999
 
 ### Orders - Create valid (requires existing product id)
 POST {{Api_HostAddress}}/api/Order
@@ -83,5 +119,14 @@ Content-Type: application/json
 	"quantity": 3
 }
 
-### Get all categories
-GET {{Api_HostAddress}}/
+### Orders - Update valid
+PUT {{Api_HostAddress}}/api/Order/1
+Content-Type: application/json
+
+{
+	"productId": 1,
+	"quantity": 5
+}
+
+### Orders - Delete missing (expects 404)
+DELETE {{Api_HostAddress}}/api/Order/999

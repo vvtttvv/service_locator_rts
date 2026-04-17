@@ -16,17 +16,56 @@ public class OrderController(IOrderService orderService) : ControllerBase
 		return Ok(result.Select(x => x.ToResponse()));
 	}
 
+	[HttpGet("{id:int}")]
+	public async Task<ActionResult<OrderResponseDto>> GetById(int id)
+	{
+		var result = await orderService.GetByIdAsync(id);
+		return result is null ? NotFound() : Ok(result.ToResponse());
+	}
+
 	[HttpPost]
 	public async Task<ActionResult<OrderResponseDto>> Create(OrderRequestDto request)
 	{
 		try
 		{
 			var created = await orderService.CreateAsync(request.ToEntity());
-			return Ok(created.ToResponse());
+			return CreatedAtAction(nameof(GetById), new { id = created.Id }, created.ToResponse());
 		}
 		catch (ArgumentException ex)
 		{
 			return BadRequest(ex.Message);
+		}
+		catch (KeyNotFoundException ex)
+		{
+			return NotFound(ex.Message);
+		}
+	}
+
+	[HttpPut("{id:int}")]
+	public async Task<ActionResult<OrderResponseDto>> Update(int id, OrderRequestDto request)
+	{
+		try
+		{
+			var updated = await orderService.UpdateAsync(id, request.ToEntity());
+			return Ok(updated.ToResponse());
+		}
+		catch (ArgumentException ex)
+		{
+			return BadRequest(ex.Message);
+		}
+		catch (KeyNotFoundException ex)
+		{
+			return NotFound(ex.Message);
+		}
+	}
+
+	[HttpDelete("{id:int}")]
+	public async Task<IActionResult> Delete(int id)
+	{
+		try
+		{
+			await orderService.DeleteAsync(id);
+			return NoContent();
 		}
 		catch (KeyNotFoundException ex)
 		{

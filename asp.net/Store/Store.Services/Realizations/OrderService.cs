@@ -12,6 +12,37 @@ public class OrderService(IOrderRepository repository, IProductRepository produc
 
 	public async Task<Order> CreateAsync(Order order)
 	{
+		await ValidateAsync(order);
+		return await repository.AddAsync(order);
+	}
+
+	public async Task<Order> UpdateAsync(int id, Order order)
+	{
+		var current = await repository.GetByIdAsync(id);
+		if (current is null)
+		{
+			throw new KeyNotFoundException($"Order with id {id} was not found.");
+		}
+
+		await ValidateAsync(order);
+
+		current.ProductId = order.ProductId;
+		current.Quantity = order.Quantity;
+		return await repository.UpdateAsync(current)
+			?? throw new KeyNotFoundException($"Order with id {id} was not found.");
+	}
+
+	public async Task DeleteAsync(int id)
+	{
+		var deleted = await repository.DeleteAsync(id);
+		if (!deleted)
+		{
+			throw new KeyNotFoundException($"Order with id {id} was not found.");
+		}
+	}
+
+	private async Task ValidateAsync(Order order)
+	{
 		if (order.ProductId <= 0)
 		{
 			throw new ArgumentException("ProductId must be greater than zero.");
@@ -32,7 +63,5 @@ public class OrderService(IOrderRepository repository, IProductRepository produc
 		{
 			throw new KeyNotFoundException($"Product with id {order.ProductId} was not found.");
 		}
-
-		return await repository.AddAsync(order);
 	}
 }

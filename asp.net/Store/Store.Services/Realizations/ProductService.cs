@@ -12,6 +12,48 @@ public class ProductService(IProductRepository repository, ICategoryRepository c
 
 	public async Task<Product> CreateAsync(Product product)
 	{
+		await ValidateAsync(product);
+		product.Name = product.Name.Trim();
+		product.Price = NormalizePrice(product.Price);
+		return await repository.AddAsync(product);
+	}
+
+	public async Task<Product> UpdateAsync(int id, Product product)
+	{
+		var current = await repository.GetByIdAsync(id);
+		if (current is null)
+		{
+			throw new KeyNotFoundException($"Product with id {id} was not found.");
+		}
+
+		await ValidateAsync(product);
+
+		current.Name = product.Name.Trim();
+		current.Price = NormalizePrice(product.Price);
+		current.CategoryId = product.CategoryId;
+
+		return await repository.UpdateAsync(current)
+			?? throw new KeyNotFoundException($"Product with id {id} was not found.");
+	}
+
+	public async Task DeleteAsync(int id)
+	{
+		try
+		{
+			var deleted = await repository.DeleteAsync(id);
+			if (!deleted)
+			{
+				throw new KeyNotFoundException($"Product with id {id} was not found.");
+			}
+		}
+		catch (Exception ex) when (ex is not KeyNotFoundException and not InvalidOperationException)
+		{
+			throw new InvalidOperationException("Product cannot be deleted because it is used by orders.");
+		}
+	}
+
+	private async Task ValidateAsync(Product product)
+	{
 		if (string.IsNullOrWhiteSpace(product.Name))
 		{
 			throw new ArgumentException("Product name is required.");
@@ -32,9 +74,7 @@ public class ProductService(IProductRepository repository, ICategoryRepository c
 		{
 			throw new KeyNotFoundException($"Category with id {product.CategoryId} was not found.");
 		}
-
-		product.Name = product.Name.Trim();
-		product.Price = decimal.Round(product.Price, 2, MidpointRounding.AwayFromZero);
-		return await repository.AddAsync(product);
 	}
+
+	private static decimal NormalizePrice(decimal price) => decimal.Round(price, 2, MidpointRounding.AwayFromZero);
 }
