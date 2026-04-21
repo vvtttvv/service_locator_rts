@@ -8,4 +8,7 @@ public class User : BaseEntity
     public int Age { get; set; } = 0;
     public string FullName { get; set; } = string.Empty;
     public UserType Role { get; set; } = UserType.Default;
+    
+    public virtual ICollection<Post> Posts { get; set; } = new List<Post>();
+    public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
 }

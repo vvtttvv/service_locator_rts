@@ -11,5 +11,4 @@ obj/
 Migrations/
 appsettings.json
 *.txt
-.idea/
 *.slnx

@@ -1,6 +1,116 @@
 @BlogApp.API_HostAddress = http://localhost:5267
 
-GET {{BlogApp.API_HostAddress}}/weatherforecast/
+### USERS: get all
+GET {{BlogApp.API_HostAddress}}/api/users
 Accept: application/json
 
-###
+### USERS: create
+POST {{BlogApp.API_HostAddress}}/api/users
+Content-Type: application/json
+Accept: application/json
+
+{
+  "userName": "api_tester",
+  "age": 25,
+  "fullName": "API Tester",
+  "role": 1
+}
+
+> {%
+  client.global.set("userId", response.body.id);
+%}
+
+### USERS: get by id
+GET {{BlogApp.API_HostAddress}}/api/users/{{userId}}
+Accept: application/json
+
+### USERS: update
+PUT {{BlogApp.API_HostAddress}}/api/users/{{userId}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "userName": "api_tester_updated",
+  "age": 26,
+  "fullName": "API Tester Updated",
+  "role": 2
+}
+
+### POSTS: get all
+GET {{BlogApp.API_HostAddress}}/api/posts
+Accept: application/json
+
+### POSTS: create
+POST {{BlogApp.API_HostAddress}}/api/posts
+Content-Type: application/json
+Accept: application/json
+
+{
+  "title": "HTTP Client Test Post",
+  "description": "Created from BlogApp.API.http",
+  "userId": "{{userId}}"
+}
+
+> {%
+  client.global.set("postId", response.body.id);
+%}
+
+### POSTS: get by id
+GET {{BlogApp.API_HostAddress}}/api/posts/{{postId}}
+Accept: application/json
+
+### POSTS: update
+PUT {{BlogApp.API_HostAddress}}/api/posts/{{postId}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "title": "HTTP Client Test Post Updated",
+  "description": "Updated from BlogApp.API.http",
+  "userId": "{{userId}}"
+}
+
+### COMMENTS: get all
+GET {{BlogApp.API_HostAddress}}/api/comments
+Accept: application/json
+
+### COMMENTS: create
+POST {{BlogApp.API_HostAddress}}/api/comments
+Content-Type: application/json
+Accept: application/json
+
+{
+  "description": "Test comment from HTTP client",
+  "userId": "{{userId}}",
+  "postId": "{{postId}}",
+  "parentId": null
+}
+
+> {%
+  client.global.set("commentId", response.body.id);
+%}
+
+### COMMENTS: get by id
+GET {{BlogApp.API_HostAddress}}/api/comments/{{commentId}}
+Accept: application/json
+
+### COMMENTS: update
+PUT {{BlogApp.API_HostAddress}}/api/comments/{{commentId}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "description": "Test comment updated from HTTP client",
+  "userId": "{{userId}}",
+  "postId": "{{postId}}",
+  "parentId": null
+}
+
+### COMMENTS: delete
+DELETE {{BlogApp.API_HostAddress}}/api/comments/{{commentId}}
+
+### POSTS: delete
+DELETE {{BlogApp.API_HostAddress}}/api/posts/{{postId}}
+
+### USERS: delete
+DELETE {{BlogApp.API_HostAddress}}/api/users/{{userId}}
