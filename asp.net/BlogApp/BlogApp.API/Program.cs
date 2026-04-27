@@ -1,5 +1,5 @@
-using BlogApp.Postgre;
-using BlogApp.Postgre.Seed;
+using BlogApp.Postgres;
+using BlogApp.Postgres.Seed;
 using BlogApp.Services;
 using Microsoft.EntityFrameworkCore;
 

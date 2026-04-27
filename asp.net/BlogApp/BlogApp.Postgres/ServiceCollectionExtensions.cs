@@ -1,10 +1,10 @@
-using BlogApp.Postgre.Repositories;
+using BlogApp.Postgres.Repositories;
 using BlogApp.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace BlogApp.Postgre;
+namespace BlogApp.Postgres;
 
 public static class ServiceCollectionExtensions
 {

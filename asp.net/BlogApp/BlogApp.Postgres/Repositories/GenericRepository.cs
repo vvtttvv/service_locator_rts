@@ -3,7 +3,7 @@ using BlogApp.Domain.Entities;
 using BlogApp.Repositories;
 using System.Linq.Expressions;
 
-namespace BlogApp.Postgre.Repositories;
+namespace BlogApp.Postgres.Repositories;
 
 public abstract class GenericRepository<TEntity>(AppDbContext dbContext) : IGenericRepository<TEntity>
 	where TEntity : BaseEntity
@@ -27,7 +27,7 @@ public abstract class GenericRepository<TEntity>(AppDbContext dbContext) : IGene
 	public virtual async Task<TEntity> AddAsync(TEntity entity)
 	{
 		await DbContext.Set<TEntity>().AddAsync(entity);
-		await DbContext.SaveChangesAsync();
+		await SaveChangesWithAuditAsync();
 		return entity;
 	}
 
@@ -41,7 +41,7 @@ public abstract class GenericRepository<TEntity>(AppDbContext dbContext) : IGene
 
 		DbContext.Entry(existing).CurrentValues.SetValues(entity);
 		existing.Id = id;
-		await DbContext.SaveChangesAsync();
+		await SaveChangesWithAuditAsync();
 		return existing;
 	}
 
@@ -54,7 +54,7 @@ public abstract class GenericRepository<TEntity>(AppDbContext dbContext) : IGene
 		}
 
 		DbContext.Set<TEntity>().Remove(existing);
-		await DbContext.SaveChangesAsync();
+		await SaveChangesWithAuditAsync();
 		return true;
 	}
 
@@ -85,5 +85,17 @@ public abstract class GenericRepository<TEntity>(AppDbContext dbContext) : IGene
 
 		return query;
 	}
-}
 
+	private async Task<int> SaveChangesWithAuditAsync(CancellationToken cancellationToken = default)
+	{
+		foreach (var entry in DbContext.ChangeTracker.Entries<BaseEntity>())
+		{
+			if (entry.State == EntityState.Modified)
+			{
+				entry.Entity.UpdatedAt = DateTime.UtcNow;
+			}
+		}
+
+		return await DbContext.SaveChangesAsync(cancellationToken);
+	}
+}

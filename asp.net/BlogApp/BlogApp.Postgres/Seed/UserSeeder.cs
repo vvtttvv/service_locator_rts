@@ -2,7 +2,7 @@ using BlogApp.Domain.Entities;
 using BlogApp.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 
-namespace BlogApp.Postgre.Seed;
+namespace BlogApp.Postgres.Seed;
 
 public static class UserSeeder
 {

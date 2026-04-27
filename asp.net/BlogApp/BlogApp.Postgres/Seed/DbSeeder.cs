@@ -1,4 +1,4 @@
-namespace BlogApp.Postgre.Seed;
+namespace BlogApp.Postgres.Seed;
 
 public static class DbSeeder
 {

@@ -1,7 +1,7 @@
 using BlogApp.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace BlogApp.Postgre.Seed;
+namespace BlogApp.Postgres.Seed;
 
 public static class CommentSeeder
 {

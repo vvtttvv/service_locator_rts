@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using BlogApp.Domain.Entities;
 
-namespace BlogApp.Postgre.Configurations;
+namespace BlogApp.Postgres.Configurations;
 
 public class CommentConfiguration : IEntityTypeConfiguration<Comment>
 {
